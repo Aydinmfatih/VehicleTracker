@@ -1,0 +1,40 @@
+﻿
+@{
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<partial name="~/Views/UILayout/HeadPartial.cshtml"></partial>
+
+<body>
+    <!-- Spinner Start -->
+    <div id="spinner" class="show position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" role="status"></div>
+    </div>
+    <!-- Spinner End -->
+    <!-- Topbar Start -->
+    <partial name="~/Views/UILayout/TopBarPartial.cshtml"></partial>
+    <!-- Topbar End -->
+    <!-- Navbar Start -->
+    <partial name="~/Views/UILayout/NavbarPartial.cshtml"></partial>
+    <!-- Navbar End -->
+    <!-- Page Header Start -->
+    <partial name="~/Views/UILayout/PageHeaderPartial.cshtml"></partial>
+    <!-- Page Header End -->
+    <!-- Fact Start -->
+    <partial name="~/Views/UILayout/FactPartial.cshtml"></partial>
+    <!-- Fact End -->
+    @RenderBody()
+
+
+    <!-- Footer Start -->
+    <partial name="~/Views/UILayout/FooterPartial.cshtml"></partial>
+
+    <a href="#" class="btn btn-secondary btn-square rounded-circle back-to-top"><i class="fa fa-arrow-up text-white"></i></a>
+    <partial name="~/Views/UILayout/ScriptPartial.cshtml"></partial>
+</body>
+
+</html>

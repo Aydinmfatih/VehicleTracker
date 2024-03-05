@@ -1,0 +1,169 @@
+﻿@model List<Vehicle>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/UILayout/Index.cshtml";
+}
+
+<html>
+<head>
+    <title>Displaying Text Directions With setPanel()</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #container {
+            flex: 1;
+            display: flex;
+        }
+
+        #sidebar {
+            flex-basis: 15rem;
+            padding: 1rem;
+            max-width: 30rem;
+            box-sizing: border-box;
+            overflow: auto;
+        }
+
+        #map {
+            flex: 1;
+            height: 100vh;
+            width: 500px;
+        }
+
+        #floating-panel {
+            position: absolute;
+            top: 10px;
+            left: 25%;
+            z-index: 5;
+            background-color: #fff;
+            padding: 5px;
+            border: 1px solid #999;
+            text-align: center;
+            font-family: "Roboto", "sans-serif";
+            line-height: 30px;
+            padding-left: 10px;
+        }
+
+        #vehicle-list {
+            list-style: none;
+            padding: 0;
+        }
+
+            #vehicle-list button {
+                display: block;
+                width: 100%;
+                padding: 0.5rem;
+                margin-bottom: 0.5rem;
+                text-align: left;
+                cursor: pointer;
+                background-color: #f0f0f0;
+                border: none;
+                border-radius: 5px;
+            }
+
+                #vehicle-list button:hover {
+                    background-color: #e0e0e0;
+                }
+
+    </style>
+</head>
+<body>
+    <h1>Vehicle List</h1>
+    <div id="container">
+        <div id="sidebar">
+            <h2>Araç Listesi</h2>
+            <ul id="vehicle-list">
+                @foreach (var vehicle in Model)
+                {
+                    <li>
+                        <button onclick="calculateAndDisplayRoute('@vehicle.StartLocation', '@vehicle.EndLocation')">
+                            Araç @vehicle.PlateNumber
+                        </button>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div id="map"></div>
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBi6q4mUT8ySYbxlwyjRNHosjAoXXoG_R4&callback=initMap&v=weekly&solution_channel=GMP_CCS_textdirections_v1" defer></script>
+
+    <script>
+        let directionsRenderer;
+
+        // Rota bilgilerini sidebarda gösterme fonksiyonu
+        function showRouteInfo(response) {
+            const route = response.routes[0];
+            const sidebar = document.getElementById("sidebar");
+            sidebar.innerHTML = ""; // Önceki rota bilgilerini temizle
+
+            // Rota uzunluğunu ve tahmini süreyi al
+            const routeLength = route.legs[0].distance.text;
+            const routeDuration = route.legs[0].duration.text;
+
+            // Rota bilgilerini sidebar'a ekle
+            const routeInfo = document.createElement("div");
+            routeInfo.innerHTML = `
+                                <h2>Rota Bilgileri</h2>
+                                <p>Toplam Uzunluk: ${routeLength}</p>
+                                <p>Tahmini Süre: ${routeDuration}</p>
+                            `;
+            sidebar.appendChild(routeInfo);
+        }
+
+        // Rota hesaplama ve gösterme fonksiyonu
+        function calculateAndDisplayRoute(start, end) {
+            const directionsService = new google.maps.DirectionsService();
+
+            directionsService.route({
+                origin: start,
+                destination: end,
+                travelMode: google.maps.TravelMode.DRIVING
+            })
+                .then((response) => {
+                    if (!directionsRenderer) {
+                        directionsRenderer = new google.maps.DirectionsRenderer();
+                        directionsRenderer.setMap(new google.maps.Map(document.getElementById("map"), {
+                            zoom: 7,
+                            center: { lat: 39.9255, lng: 32.8662 },
+                            disableDefaultUI: true,
+                        }));
+                    }
+
+                    // Haritada mevcut rotayı temizle
+                    directionsRenderer.setDirections({ routes: [] });
+
+                    // Yeni rotayı göster
+                    directionsRenderer.setDirections(response);
+
+                    // Rota bilgilerini sidebarda göster
+                    showRouteInfo(response);
+                })
+                .catch((e) => {
+                    window.alert("Directions request failed due to " + e.status);
+                });
+        }
+
+        // Modelden gelen araçları kullanarak HTML'e araçları listele
+        function initMap() {
+            // Harita başlatma fonksiyonunu güncelle
+            const control = document.getElementById("floating-panel");
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 7,
+                center: { lat: 39.9255, lng: 32.8662 },
+                disableDefaultUI: true,
+
+            });
+
+            map.controls[google.maps.ControlPosition.TOP_CENTER].push(control);
+        }
+    </script>
+</body>
+</html>
