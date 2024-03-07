@@ -12,27 +12,26 @@
 <script>
     let directionsRenderer;
 
-    // Rota bilgilerini sidebarda gösterme fonksiyonu
+  
     function showRouteInfo(response) {
         const route = response.routes[0];
         const sidebar = document.getElementById("sidebar");
-        sidebar.innerHTML = ""; // Önceki rota bilgilerini temizle
+        sidebar.innerHTML = ""; 
 
-        // Rota uzunluğunu ve tahmini süreyi al
+  
         const routeLength = route.legs[0].distance.text;
         const routeDuration = route.legs[0].duration.text;
 
-        // Rota bilgilerini sidebar'a ekle
+   
         const routeInfo = document.createElement("div");
         routeInfo.innerHTML = `
-                                                                                                    <h2>Rota Bilgileri</h2>
-                                                                                                    <p>Toplam Uzunluk: ${routeLength}</p>
-                                                                                                    <p>Tahmini Süre: ${routeDuration}</p>
-                                                                                                `;
+                             <h2>Rota Bilgileri</h2>
+                             <p>Toplam Uzunluk: ${routeLength}</p>
+                              <p>Tahmini Süre: ${routeDuration}</p>
+                                       `;
         sidebar.appendChild(routeInfo);
     }
 
-    // Rota hesaplama ve gösterme fonksiyonu
     function calculateAndDisplayRoute(start, end) {
         const directionsService = new google.maps.DirectionsService();
 
@@ -52,13 +51,13 @@
                     }));
                 }
 
-                // Haritada mevcut rotayı temizle
+             
                 directionsRenderer.setDirections({ routes: [] });
 
-                // Yeni rotayı göster
+              
                 directionsRenderer.setDirections(response);
 
-                // Rota bilgilerini sidebarda göster
+           
                 showRouteInfo(response);
             })
             .catch((e) => {
@@ -66,9 +65,8 @@
             });
     }
 
-    // Modelden gelen araçları kullanarak HTML'e araçları listele
     function initMap() {
-        // Harita başlatma fonksiyonunu güncelle
+
         const control = document.getElementById("floating-panel");
         const map = new google.maps.Map(document.getElementById("map"), {
             zoom: 7,
